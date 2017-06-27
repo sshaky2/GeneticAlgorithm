@@ -4,3 +4,9 @@ c:\users\sshakya\documents\visual studio 2015\Projects\VZWCostOptimizationGA\VZW
 c:\users\sshakya\documents\visual studio 2015\Projects\VZWCostOptimizationGA\VZWCostOptimizationGA\bin\Debug\VZWCostOptimizationGA.pdb
 c:\users\sshakya\documents\visual studio 2015\Projects\VZWCostOptimizationGA\VZWCostOptimizationGA\obj\Debug\VZWCostOptimizationGA.exe
 c:\users\sshakya\documents\visual studio 2015\Projects\VZWCostOptimizationGA\VZWCostOptimizationGA\obj\Debug\VZWCostOptimizationGA.pdb
+C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\VZWCostOptimizationGA\bin\Debug\VZWCostOptimizationGA.exe.config
+C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\VZWCostOptimizationGA\obj\Debug\VZWCostOptimizationGA.exe
+C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\VZWCostOptimizationGA\obj\Debug\VZWCostOptimizationGA.pdb
+C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\VZWCostOptimizationGA\obj\Debug\VZWCostOptimizationGA.csprojResolveAssemblyReference.cache
+C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\VZWCostOptimizationGA\bin\Debug\VZWCostOptimizationGA.exe
+C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\VZWCostOptimizationGA\bin\Debug\VZWCostOptimizationGA.pdb
