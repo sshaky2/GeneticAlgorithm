@@ -15,7 +15,7 @@ namespace VZWCostOptimizationGA
         private double[] usageCount;
         private readonly int _planNum;
         private readonly double[] _usage;
-        private string target = "Arbitrary multiplier, we can also use monte carlo method";
+        private string target = "I am evolving";
 
         public double Fitness { get; set; }
         public double TotalCost { get; set; }
@@ -68,7 +68,7 @@ namespace VZWCostOptimizationGA
                 }
             }
             Fitness = (double)score / (double)target.Length;
-            Fitness = Math.Pow(Fitness, 4);
+            Fitness = Math.Pow(Fitness, 2) + 0.01;
         }
 
         public DNA CrossOver(DNA partner)
