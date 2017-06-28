@@ -11,10 +11,10 @@ namespace VZWCostOptimizationGA
     {
         static void Main(string[] args)
         {
-            int popMax = 200;
+            int popMax = 100;
             double mutationRate = 0.01;
             int planNum = 8;
-            int maxGeneration = 1000;
+            int maxGeneration = 10000;
 
             List<double> arr = new List<double>();
             string path = @"C:\Users\sshakya\Documents\Visual Studio 2015\Projects\VZWCostOptimizationGA\Data\data.txt";
@@ -31,15 +31,13 @@ namespace VZWCostOptimizationGA
                 //population.NaturalSelection();
                 //Create next generation
                 population.Generate();
-                // Calculate fitness
-                population.CalcFitness();
                 var bestDna = population.GetBest();
-                for (int i = 0; i < bestDna.Genes.Length; i++)
-                {
-                    Console.Write(bestDna.Genes[i]);
-                }
-                Console.WriteLine();
-                Console.WriteLine($"Generation: {population.Generations}, Average Fitness: {population.GetAverageFitness()}");
+                //for (int i = 0; i < bestDna.Genes.Length; i++)
+                //{
+                //    Console.Write(bestDna.Genes[i]);
+                //}
+                //Console.WriteLine();
+                Console.WriteLine($"Generation: {population.Generations}, Best fitness: {population.GetBest().Fitness} Average Fitness: {population.GetAverageFitness()} Total Cost: {population.GetBest().TotalCost}");
             }
         }
     }
