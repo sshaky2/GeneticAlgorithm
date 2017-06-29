@@ -66,7 +66,10 @@ namespace VZWCostOptimizationGA
                 }
             }
 
-            Fitness = (1 / (TotalCost + 1));
+            
+
+            Fitness = Math.Pow(1/TotalCost, 3);
+            //Fitness = TotalCost;
         }
 
         //public void CalculateFitness()
@@ -97,13 +100,17 @@ namespace VZWCostOptimizationGA
         public void NormalizeFitness(double totalFitness, double maxCost, double minCost)
         {
 
-            Fitness = (1 / (TotalCost + 1));
-            double min = 1 / maxCost;
-            double max = 1 / 10000.00;
-            double diff = Math.Abs(max - min);
-            Fitness = (Fitness - min) / diff;
-            Fitness = Math.Pow(Fitness, 3);
-            //Fitness = Math.Pow((Fitness/totalFitness),2);
+            ////Fitness = (1 / (TotalCost + 1));
+            //double min = 1 / maxCost;
+            //double max = 1 / minCost;
+            //double diff = Math.Abs(max - min);
+            //Fitness = (Fitness - min) / diff;
+            //Fitness = (Fitness - min) / totalFitness;
+            //Fitness = Math.Pow(Fitness, 3);
+
+            Fitness = (Fitness / totalFitness);
+            //Fitness = Math.Pow(Fitness, 3);
+
         }
 
         public DNA CrossOver(DNA partner)

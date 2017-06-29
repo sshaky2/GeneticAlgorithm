@@ -18,7 +18,6 @@ namespace VZWCostOptimizationGA
         private double[] _usage;
         private double perfectScore;
         private int _maxGeneration;
-        private string target = "Based on fitness, each member will get added to the mating pool a certain number of times";
 
         public Population(double mutationRate, int popNumber, int planNum, int maxGeneration, double[] usage )
         {
@@ -45,9 +44,11 @@ namespace VZWCostOptimizationGA
 
                 TotalFitness += population[i].Fitness;
             }
+            double total = 0;
             for (int i = 0; i < population.Length; i++)
             {
                 population[i].NormalizeFitness(TotalFitness, MaxCost, MinCost);
+                total += population[i].Fitness;
             }
             finished = false;
             Generations = 0;
@@ -55,8 +56,7 @@ namespace VZWCostOptimizationGA
             _maxGeneration = maxGeneration;
             
         }
-
-
+        
         public void Generate()
         {
             double maxFitness = 0;
@@ -71,12 +71,13 @@ namespace VZWCostOptimizationGA
             }
 
             DNA[] newPopulation = new DNA[population.Length];
-            // Refill the population with children from the mating pool
             for (int i = 0; i < population.Length; i++)
             {
 
-                var partnerA = AcceptReject(maxFitness);
-                var partnerB = AcceptReject(maxFitness);
+                //var partnerA = AcceptReject(maxFitness);
+                //var partnerB = AcceptReject(maxFitness);
+                var partnerA = PickOne(population);
+                var partnerB = PickOne(population);
                 DNA child = partnerA.CrossOver(partnerB);
                 child.Mutate(_mutationRate);
                 newPopulation[i] = child;
@@ -84,6 +85,7 @@ namespace VZWCostOptimizationGA
             TotalFitness = 0;
             MaxCost = 0;
             MinCost = double.MaxValue;
+            double total = 0;
             for (int i = 0; i < newPopulation.Length; i++)
             {
                 population[i] = newPopulation[i];
@@ -99,13 +101,49 @@ namespace VZWCostOptimizationGA
 
                 TotalFitness += population[i].Fitness;
                
+
             }
             for (int i = 0; i < newPopulation.Length; i++)
             {
                 population[i].NormalizeFitness(TotalFitness, MaxCost, MinCost);
+                total += population[i].Fitness;
             }
 
             Generations++;
+        }
+
+        private DNA PickOne(DNA[] population)
+        {
+            var index = 0;
+            var r = RandomGeneration.GetRandomDouble();
+
+            while (r > 0)
+            {
+                r = r - population[index].Fitness;
+                index++;
+            }
+            index--;
+            return population[index];
+        }
+
+        private DNA BetterPickOne(DNA[] population)
+        {
+            for (int i = 0; i < population.Length; i++)
+            {
+                int select = 0;
+                double selector = RandomGeneration.GetRandomDouble();
+                while (selector > 0)
+                {
+                    selector -= population[i].Fitness;//  scores[select];
+                    /*scores[] is the table containing the percentage of selection of each element,
+                    for example, if element 3 has a 12 percent chance of being selected, scores[3] = 0.12*/
+                    select += 1;
+                }
+                select -= 1;
+                //Here, add element at index select to the new population
+                return population[i];
+            }
+            return null;
         }
 
         DNA AcceptReject(double maxFitness)

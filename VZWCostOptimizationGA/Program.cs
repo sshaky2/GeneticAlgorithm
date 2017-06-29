@@ -11,13 +11,13 @@ namespace VZWCostOptimizationGA
     {
         static void Main(string[] args)
         {
-            int popMax = 100;
+            int popMax = 200;
             double mutationRate = 0.01;
             int planNum = 8;
-            int maxGeneration = 10000;
+            int maxGeneration =10000;
 
             List<double> arr = new List<double>();
-            string path = @"C:\Users\sshakya\Documents\Visual Studio 2015\Projects\VZWCostOptimizationGA\Data\data.txt";
+            string path = @"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\Data\data1.txt";
             string[] lines = File.ReadAllLines(path);
             foreach (var val in lines)
             {
@@ -37,7 +37,7 @@ namespace VZWCostOptimizationGA
                 //    Console.Write(bestDna.Genes[i]);
                 //}
                 //Console.WriteLine();
-                Console.WriteLine($"Generation: {population.Generations}, Best fitness: {population.GetBest().Fitness} Average Fitness: {population.GetAverageFitness()} Total Cost: {population.GetBest().TotalCost}");
+                Console.WriteLine($"Generation: {population.Generations}, Best fitness: {population.GetBest().Fitness} Total Cost: {population.GetBest().TotalCost}");
             }
         }
     }
