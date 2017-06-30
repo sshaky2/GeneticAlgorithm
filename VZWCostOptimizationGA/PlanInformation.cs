@@ -6,15 +6,9 @@ using System.Threading.Tasks;
 
 namespace VZWCostOptimizationGA
 {
-    public class Plan
-    {
-        public int Size { get; set; }
-        public double Cost { get; set; }
-        public double OverageCost { get; set; }
-
-    }
     public static class PlanInformation
     {
+        public static readonly double TotalSize = 67862; 
         public static Plan GetInfo(int planId)
         {
             switch (planId)
@@ -55,5 +49,6 @@ namespace VZWCostOptimizationGA
             }
             return null;
         }
+        
     }
 }

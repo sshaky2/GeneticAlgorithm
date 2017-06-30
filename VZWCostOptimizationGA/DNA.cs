@@ -17,7 +17,11 @@ namespace VZWCostOptimizationGA
         private readonly double[] _usage;
         public double Fitness { get; set; }
         public double TotalCost { get; set; }
-        public DNA(int geneSize, int planNum, double[] usage)
+        private Plan[] _plansInfo;
+
+
+
+        public DNA(int geneSize, int planNum, Plan[] plansInfo, double[] usage)
         {
             _planNum = planNum;
             Genes = new int[geneSize];
@@ -25,10 +29,14 @@ namespace VZWCostOptimizationGA
             planCount = new int[planNum];
             usageCount = new double[planNum];
             _usage = usage;
+            _plansInfo = plansInfo;
 
             for (int i = 0; i < Genes.Length; i++)
             {
-                var r = RandomGeneration.GetRandomNumber(planNum);
+                var r = PickOne(plansInfo);
+                //var r = RandomGeneration.GetRandomNumber(planNum);
+                //var list = Shuffle(new List<int> {4,3,2,0});
+                //Genes[i] = list[0];
                 Genes[i] = r;
             }
            
@@ -37,6 +45,34 @@ namespace VZWCostOptimizationGA
                 //    Genes[i] = GetRandomChar();  // Pick from range of chars
                 //    //Console.WriteLine(Genes[i]);
                 //}
+        }
+
+        private int PickOne(Plan[] plansInfo)
+        {
+            var index = 0;
+            var r = RandomGeneration.GetRandomDouble();
+
+            while (r > 0)
+            {
+                r = r - plansInfo[index].Fitness;
+                index++;
+            }
+            index--;
+            return index;
+        }
+
+        public static T[] Shuffle<T>(IEnumerable<T> items)
+        {
+            var result = items.ToArray();
+            for (int i = items.Count(); i > 1; i--)
+            {
+                int j = RandomGeneration.GetRandomNumber(i);
+                var t = result[j];
+                result[j] = result[i - 1];
+                result[i - 1] = t;
+            }
+
+            return result;
         }
 
         public void CalculateFitness()
@@ -115,16 +151,31 @@ namespace VZWCostOptimizationGA
 
         public DNA CrossOver(DNA partner)
         {
-            DNA child = new DNA(Genes.Length, _planNum, _usage);
+            DNA child = new DNA(Genes.Length, _planNum, _plansInfo, _usage);
 
-            int midpoint = RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
+            int midpoint1 = RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
+            int midpoint2 = RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
 
-            // Half from one, half from the other
+            int start = Math.Min(midpoint1, midpoint2);
+            int stop = Math.Max(midpoint1, midpoint2);
             for (int i = 0; i < Genes.Length; i++)
             {
-                if (i > midpoint) child.Genes[i] = Genes[i];
-                else child.Genes[i] = partner.Genes[i];
+                if (i >= start && i < stop)
+                {
+                    child.Genes[i] = partner.Genes[i];
+                }
+                else
+                {
+                    child.Genes[i] = Genes[i];
+                }
             }
+
+            // Half from one, half from the other
+            //for (int i = 0; i < Genes.Length; i++)
+            //{
+            //    if (i > midpoint) child.Genes[i] = Genes[i];
+            //    else child.Genes[i] = partner.Genes[i];
+            //}
             return child;
         }
 
@@ -132,11 +183,18 @@ namespace VZWCostOptimizationGA
         {
             for (int i = 0; i < Genes.Length; i++)
             {
-                var abc = RandomGeneration.GetRandomDouble();
-                if (abc < mutationRate)
+                if (RandomGeneration.GetRandomDouble() < mutationRate)
                 {
-                    Genes[i] = RandomGeneration.GetRandomNumber(_planNum);
+                    //Genes[i] = PickOne(_plansInfo);
+                    //Genes[i] = RandomGeneration.GetRandomNumber(_planNum);
                     //Genes[i] = GetRandomChar();
+
+                    var r1 = RandomGeneration.GetRandomNumber(Genes.Length);
+                    var r2 = RandomGeneration.GetRandomNumber(Genes.Length);
+                    var tmp = Genes[r2];
+                    Genes[r2] = Genes[r1];
+                    Genes[r1] = tmp;
+
                 }
             }
         }

@@ -14,23 +14,35 @@ namespace VZWCostOptimizationGA
         public double MinCost { get; set; }
         public double MaxCost { get; set; }
         public double TotalFitness { get; set; }
+        public double BestCost { get; set; }
         private bool finished;
         private double[] _usage;
         private double perfectScore;
         private int _maxGeneration;
 
-        public Population(double mutationRate, int popNumber, int planNum, int maxGeneration, double[] usage )
+        public Plan[] PlansInfo { get; set; }
+
+        public Population(double mutationRate, int popNumber, int planNum, int maxGeneration, double usageAverage, double[] usage )
         {
             _mutationRate = mutationRate;
             population = new DNA[popNumber];
             _usage = usage;
+            PlansInfo = new Plan[planNum];
+            double totalPlanFitness = 0;
+            for (int i = 0; i < planNum; i++)
+            {
+                PlansInfo[i] = PlanInformation.GetInfo(i);
+                PlansInfo[i].Fitness = 1/Math.Pow(Math.Abs(PlansInfo[i].Size - usageAverage), 2);
+                totalPlanFitness += PlansInfo[i].Fitness;
+            }
+            NormalizePlanFitness(totalPlanFitness, planNum);
 
             MaxCost = 0;
             MinCost = double.MaxValue;
             TotalFitness = 0;
             for (int i = 0; i < population.Length; i++)
             {
-                population[i] = new DNA(_usage.Length, planNum, _usage);
+                population[i] = new DNA(_usage.Length, planNum, PlansInfo, _usage);
                 population[i].CalculateFitness();
                 //population[i] = new DNA(target.Length, planNum, _usage);
                 if (population[i].TotalCost > MaxCost)
@@ -44,11 +56,14 @@ namespace VZWCostOptimizationGA
 
                 TotalFitness += population[i].Fitness;
             }
-            double total = 0;
+            BestCost = Double.MaxValue;
             for (int i = 0; i < population.Length; i++)
             {
                 population[i].NormalizeFitness(TotalFitness, MaxCost, MinCost);
-                total += population[i].Fitness;
+                if (population[i].TotalCost < BestCost)
+                {
+                    BestCost = population[i].TotalCost;
+                }
             }
             finished = false;
             Generations = 0;
@@ -56,19 +71,29 @@ namespace VZWCostOptimizationGA
             _maxGeneration = maxGeneration;
             
         }
+
+        private void NormalizePlanFitness(double totalPlanFitness, int planNum)
+        {
+            double totalNormalizedFItness = 0;
+            for (int i = 0; i < planNum; i++)
+            {
+                PlansInfo[i].Fitness = PlansInfo[i].Fitness/totalPlanFitness;
+                totalNormalizedFItness += PlansInfo[i].Fitness;
+            }
+        }
         
         public void Generate()
         {
-            double maxFitness = 0;
+            //double maxFitness = 0;
            
-            for (int i = 0; i < population.Length; i++)
-            {
-                if (population[i].Fitness > maxFitness)
-                {
-                    maxFitness = population[i].Fitness;
-                }
+            //for (int i = 0; i < population.Length; i++)
+            //{
+            //    if (population[i].Fitness > maxFitness)
+            //    {
+            //        maxFitness = population[i].Fitness;
+            //    }
                
-            }
+            //}
 
             DNA[] newPopulation = new DNA[population.Length];
             for (int i = 0; i < population.Length; i++)
@@ -85,7 +110,6 @@ namespace VZWCostOptimizationGA
             TotalFitness = 0;
             MaxCost = 0;
             MinCost = double.MaxValue;
-            double total = 0;
             for (int i = 0; i < newPopulation.Length; i++)
             {
                 population[i] = newPopulation[i];
@@ -103,10 +127,15 @@ namespace VZWCostOptimizationGA
                
 
             }
+            BestCost = double.MaxValue;
             for (int i = 0; i < newPopulation.Length; i++)
             {
                 population[i].NormalizeFitness(TotalFitness, MaxCost, MinCost);
-                total += population[i].Fitness;
+                if (population[i].TotalCost < BestCost)
+                {
+                    BestCost = population[i].TotalCost;
+                }
+
             }
 
             Generations++;
@@ -178,6 +207,7 @@ namespace VZWCostOptimizationGA
             if (Generations >= _maxGeneration ) finished = true;
             return population[index];
         }
+        
 
         public bool Finished()
         {
