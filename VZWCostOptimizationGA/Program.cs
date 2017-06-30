@@ -11,8 +11,8 @@ namespace VZWCostOptimizationGA
     {
         static void Main(string[] args)
         {
-            int popMax = 1500;
-            double mutationRate = 0.02;
+            int popMax = 500;
+            double mutationRate = 0.01;
             int planNum = 8;
             int maxGeneration =100000;
 
@@ -28,6 +28,7 @@ namespace VZWCostOptimizationGA
             double average = total/lines.Length;
 
             Population population = new Population(mutationRate, popMax, planNum, maxGeneration, average, arr.ToArray());
+            
 
             while (!population.Finished())
             {
@@ -40,7 +41,7 @@ namespace VZWCostOptimizationGA
                 //    Console.Write(bestDna.Genes[i]);
                 //}
                 //Console.WriteLine();
-                Console.WriteLine($"Generation: {population.Generations}, Best fitness: {population.GetBest().Fitness} Total Cost: {population.BestCost}");
+                Console.WriteLine($"Generation: {population.Generations}, Worst Cost: {population.WorstCost} Total Cost: {population.BestCost}");
             }
         }
     }

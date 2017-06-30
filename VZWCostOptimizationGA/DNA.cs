@@ -9,7 +9,6 @@ namespace VZWCostOptimizationGA
 {
     public class DNA
     {
-        //public int[] Genes { get; set; }
         public int[] Genes { get; set; }
         private int[] planCount;
         private double[] usageCount;
@@ -18,33 +17,37 @@ namespace VZWCostOptimizationGA
         public double Fitness { get; set; }
         public double TotalCost { get; set; }
         private Plan[] _plansInfo;
+        private double _totalUsage;
+        private double _usageAverage;
 
 
-
-        public DNA(int geneSize, int planNum, Plan[] plansInfo, double[] usage)
+        public DNA(int planNum, Plan[] plansInfo, double usageAverage, double[] usage)
         {
             _planNum = planNum;
-            Genes = new int[geneSize];
+            Genes = new int[usage.Length];
 
             planCount = new int[planNum];
             usageCount = new double[planNum];
             _usage = usage;
             _plansInfo = plansInfo;
+            _totalUsage = usageAverage*_usage.Length;
+            _usageAverage = usageAverage;
 
             for (int i = 0; i < Genes.Length; i++)
             {
-                var r = PickOne(plansInfo);
-                //var r = RandomGeneration.GetRandomNumber(planNum);
-                //var list = Shuffle(new List<int> {4,3,2,0});
-                //Genes[i] = list[0];
-                Genes[i] = r;
+                if (i < Genes.Length/2)
+                {
+                    var r = PickOne(plansInfo);
+                    Genes[i] = r;
+                }
+                else
+                {
+                    var r = RandomGeneration.GetRandomNumber(planNum);
+                    Genes[i] = r;
+
+                }
+                
             }
-           
-            //for (int i = 0; i < target.Length; i++)
-                //{
-                //    Genes[i] = GetRandomChar();  // Pick from range of chars
-                //    //Console.WriteLine(Genes[i]);
-                //}
         }
 
         private int PickOne(Plan[] plansInfo)
@@ -92,6 +95,7 @@ namespace VZWCostOptimizationGA
             }
 
             TotalCost = 0;
+            double totalPlancommitmentSum = 0;
             for (int i = 0; i < _planNum; i++)
             {
                 var planInfo = PlanInformation.GetInfo(i);
@@ -100,58 +104,24 @@ namespace VZWCostOptimizationGA
                 {
                     TotalCost += (usageCount[i] - planInfo.Size * planCount[i]) * planInfo.OverageCost;
                 }
+                totalPlancommitmentSum += planCount[i]* planInfo.Size;
             }
-
             
 
-            Fitness = Math.Pow(1/TotalCost, 3);
-            //Fitness = TotalCost;
+            Fitness = Math.Pow(1 * (1/TotalCost) + (1/Math.Abs(totalPlancommitmentSum - _totalUsage)) * 1, 3);
+            //Fitness = Math.Pow((1 / TotalCost), 3);
         }
-
-        //public void CalculateFitness()
-        //{
-        //    //CalculateTotalCost();
-
-        //    Fitness = (1 / TotalCost + 1);
-        //    //double min = 1/maxCost;
-        //    //double max = 1/10000.00;
-        //    //double diff = Math.Abs(max - min);
-        //    //Fitness = (Fitness - min)/diff;
-        //    //Fitness = Math.Pow(Fitness, 3);
-
-
-
-        //    //int score = 0;
-        //    //for (int i = 0; i < Genes.Length; i++)
-        //    //{
-        //    //    if (Genes[i] == target[i])
-        //    //    {
-        //    //        score++;
-        //    //    }
-        //    //}
-        //    //Fitness = (double)score / (double)target.Length;
-        //    //Fitness = Math.Pow(Fitness, 2) + 0.01;
-        //}
 
         public void NormalizeFitness(double totalFitness, double maxCost, double minCost)
         {
 
-            ////Fitness = (1 / (TotalCost + 1));
-            //double min = 1 / maxCost;
-            //double max = 1 / minCost;
-            //double diff = Math.Abs(max - min);
-            //Fitness = (Fitness - min) / diff;
-            //Fitness = (Fitness - min) / totalFitness;
-            //Fitness = Math.Pow(Fitness, 3);
-
             Fitness = (Fitness / totalFitness);
-            //Fitness = Math.Pow(Fitness, 3);
 
         }
 
         public DNA CrossOver(DNA partner)
         {
-            DNA child = new DNA(Genes.Length, _planNum, _plansInfo, _usage);
+            DNA child = new DNA(_planNum, _plansInfo, _usageAverage, _usage);
 
             int midpoint1 = RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
             int midpoint2 = RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
@@ -185,10 +155,6 @@ namespace VZWCostOptimizationGA
             {
                 if (RandomGeneration.GetRandomDouble() < mutationRate)
                 {
-                    //Genes[i] = PickOne(_plansInfo);
-                    //Genes[i] = RandomGeneration.GetRandomNumber(_planNum);
-                    //Genes[i] = GetRandomChar();
-
                     var r1 = RandomGeneration.GetRandomNumber(Genes.Length);
                     var r2 = RandomGeneration.GetRandomNumber(Genes.Length);
                     var tmp = Genes[r2];
