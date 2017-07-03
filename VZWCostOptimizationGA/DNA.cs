@@ -19,12 +19,21 @@ namespace VZWCostOptimizationGA
         private Plan[] _plansInfo;
         private double _totalUsage;
         private double _usageAverage;
+        public int Age { get; set; }
+        private string id;
+        public string Id
+        {
+            get { return id; }
+            set { id = value; }
+        }
 
 
         public DNA(int planNum, Plan[] plansInfo, double usageAverage, double[] usage)
         {
+            id = Guid.NewGuid().ToString();
             _planNum = planNum;
             Genes = new int[usage.Length];
+            Age = 1;
 
             planCount = new int[planNum];
             usageCount = new double[planNum];
@@ -35,7 +44,7 @@ namespace VZWCostOptimizationGA
 
             for (int i = 0; i < Genes.Length; i++)
             {
-                if (i < Genes.Length/2)
+                if (i < Genes.Length/9)
                 {
                     var r = PickOne(plansInfo);
                     Genes[i] = r;
@@ -64,7 +73,7 @@ namespace VZWCostOptimizationGA
             return index;
         }
 
-        public static T[] Shuffle<T>(IEnumerable<T> items)
+        public T[] Shuffle<T>(IEnumerable<T> items)
         {
             var result = items.ToArray();
             for (int i = items.Count(); i > 1; i--)
@@ -108,7 +117,7 @@ namespace VZWCostOptimizationGA
             }
             
 
-            Fitness = Math.Pow(1 * (1/TotalCost) + (1/Math.Abs(totalPlancommitmentSum - _totalUsage)) * 1, 3);
+            Fitness = Math.Pow(1 * (1/TotalCost) + 1/(totalPlancommitmentSum - _totalUsage) * 0, 3);
             //Fitness = Math.Pow((1 / TotalCost), 3);
         }
 
@@ -156,10 +165,13 @@ namespace VZWCostOptimizationGA
                 if (RandomGeneration.GetRandomDouble() < mutationRate)
                 {
                     var r1 = RandomGeneration.GetRandomNumber(Genes.Length);
-                    var r2 = RandomGeneration.GetRandomNumber(Genes.Length);
-                    var tmp = Genes[r2];
-                    Genes[r2] = Genes[r1];
-                    Genes[r1] = tmp;
+                    //var r2 = RandomGeneration.GetRandomNumber(Genes.Length);
+                    //var tmp = Genes[r2];
+                    //Genes[r2] = Genes[r1];
+                    //Genes[r1] = tmp;
+
+                    //Genes[r1] = RandomGeneration.GetRandomNumber(_planNum);
+                    Genes[r1] = PickOne(_plansInfo);
 
                 }
             }

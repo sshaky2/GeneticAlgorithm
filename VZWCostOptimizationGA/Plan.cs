@@ -6,6 +6,7 @@
         public double Cost { get; set; }
         public double OverageCost { get; set; }
         public double Fitness { get; set; }
+        
 
     }
 }

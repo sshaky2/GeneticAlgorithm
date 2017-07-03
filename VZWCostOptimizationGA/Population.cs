@@ -16,6 +16,8 @@ namespace VZWCostOptimizationGA
         public double TotalFitness { get; set; }
         public double BestCost { get; set; }
         public double WorstCost { get; set; }
+        public DNA BestDNA { get; set; }
+        public DNA WorstDNA { get; set; }
         private bool finished;
         private double[] _usage;
         private double perfectScore;
@@ -56,6 +58,7 @@ namespace VZWCostOptimizationGA
                 if (populationDNA[i].TotalCost > MaxCost)
                 {
                     MaxCost = populationDNA[i].TotalCost;
+                   
                 }
                 if (populationDNA[i].TotalCost < MinCost)
                 {
@@ -71,6 +74,7 @@ namespace VZWCostOptimizationGA
                 if (populationDNA[i].TotalCost < BestCost)
                 {
                     BestCost = populationDNA[i].TotalCost;
+                    BestDNA = populationDNA[i];
                 }
             }
             finished = false;
@@ -130,10 +134,12 @@ namespace VZWCostOptimizationGA
                 if (populationDNA[i].TotalCost < BestCost)
                 {
                     BestCost = populationDNA[i].TotalCost;
+                    BestDNA = populationDNA[i];
                 }
                 if (populationDNA[i].TotalCost > WorstCost)
                 {
                     WorstCost = populationDNA[i].TotalCost;
+                    WorstDNA = populationDNA[i];
                 }
 
             }
@@ -141,11 +147,87 @@ namespace VZWCostOptimizationGA
             Generations++;
         }
 
+        public void GenerateBetter()
+        {
+
+            var p = RandomGeneration.GetRandomNumber(populationDNA.Length - 1);
+            if (p%2 != 0) p++;
+            var orderedPopulation = GetWorstToBestPopulation(populationDNA);
+           
+            for (int i = 0; i < p; i++)
+            {
+                //var replace = populationDNA.Select(x => x.Id == orderedPopulation[i].Id).First();
+                var replaceIndex = -1;
+                for (int x = 0; x < populationDNA.Length; x++)
+                {
+                    if (populationDNA[x].Id == orderedPopulation[i].Id)
+                    {
+                        replaceIndex = x;
+                        break;
+                    }
+                }
+                //int replaceIndex = Array.IndexOf(populationDNA, replace);
+                var partnerA = RankBased(populationDNA);
+                var partnerB = RankBased(populationDNA);
+                DNA child = partnerA.CrossOver(partnerB);
+                child.Mutate(_mutationRate);
+                populationDNA[replaceIndex] = child;
+
+            }
+
+            TotalFitness = 0;
+            MaxCost = 0;
+            MinCost = double.MaxValue;
+            for (int i = 0; i < populationDNA.Length; i++)
+            {
+                populationDNA[i].CalculateFitness();
+                if (populationDNA[i].TotalCost > MaxCost)
+                {
+                    MaxCost = populationDNA[i].TotalCost;
+                }
+                if (populationDNA[i].TotalCost < MinCost)
+                {
+                    MinCost = populationDNA[i].TotalCost;
+                }
+
+                TotalFitness += populationDNA[i].Fitness;
+
+
+            }
+
+            BestCost = double.MaxValue;
+            WorstCost = 0;
+            for (int i = 0; i < populationDNA.Length; i++)
+            {
+                populationDNA[i].NormalizeFitness(TotalFitness, MaxCost, MinCost);
+                if (populationDNA[i].TotalCost < BestCost)
+                {
+                    BestCost = populationDNA[i].TotalCost;
+                    BestDNA = populationDNA[i];
+                }
+                if (populationDNA[i].TotalCost > WorstCost)
+                {
+                    WorstCost = populationDNA[i].TotalCost;
+                    WorstDNA = populationDNA[i];
+                }
+
+            }
+
+            Generations++;
+            
+            
+        }
+
         private DNA RankBased(DNA[] population)
         {
-            var pop = population.ToList().OrderBy(x => x.Fitness).ToArray();
+            //DNA[] newpop = new DNA[population.Length];
+            //for (int i = 0; i < population.Length; i++)
+            //{
+            //    newpop[i] = population[i];
+            //}
+            var pop = population.OrderBy(x => x.Fitness).ToArray();
             double[] fitnes = new double[pop.Count()];
-            double sum = (double)population.Length*(pop.Count() + 1)/2;
+            double sum = (double)pop.Count() * (pop.Count() + 1)/2;
             for (int i = 0; i < population.Length; i++)
             {
                 fitnes[i] = Convert.ToDouble((i + 1)/sum);
@@ -192,6 +274,17 @@ namespace VZWCostOptimizationGA
             }
             if (Generations >= _maxGeneration ) finished = true;
             return populationDNA[index];
+        }
+
+        public DNA[] GetWorstToBestPopulation(DNA[] population)
+        {
+            //DNA[] newpop = new DNA[population.Length];
+            //for (int i = 0; i < population.Length; i++)
+            //{
+            //    newpop[i] = population[i];
+            //}
+            return population.OrderBy(x => x.Fitness).ToArray();
+
         }
         
 

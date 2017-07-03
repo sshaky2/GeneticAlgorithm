@@ -12,12 +12,18 @@ namespace VZWCostOptimizationGA
 
         public static int GetRandomNumber(int maxValue)
         {
-            return rand.Next(maxValue);
+            lock (rand)
+            {
+                return rand.Next(maxValue);
+            }
         }
 
         public static double GetRandomDouble()
         {
-           return rand.NextDouble();
+            lock (rand)
+            {
+                return rand.NextDouble();
+            }
         }
     }
 }
