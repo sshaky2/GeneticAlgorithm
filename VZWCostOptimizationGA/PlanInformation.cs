@@ -13,7 +13,7 @@ namespace VZWCostOptimizationGA
         public static Plan GetInfo(int planId)
         {
             //var lockingvar = "abc";
-            lock (lockingvar)
+            //lock (lockingvar)
             {
                 switch (planId)
                 {
