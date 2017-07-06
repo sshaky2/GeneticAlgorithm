@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="DNA.cs" />
     <Compile Include="GeneticAlgorithm.cs" />
+    <Compile Include="Permutation.cs" />
     <Compile Include="Plan.cs" />
     <Compile Include="PlanInformation.cs" />
     <Compile Include="Population.cs" />
