@@ -19,7 +19,7 @@ namespace VZWCostOptimizationGA
         public DNA BestDNA { get; set; }
         public DNA WorstDNA { get; set; }
         private bool finished;
-        private double[] _usage;
+        private Tuple<long, double>[] _usage;
         private double perfectScore;
         private int _maxGeneration;
         private double _usageAverag;
@@ -32,8 +32,16 @@ namespace VZWCostOptimizationGA
             set { populationDNA = value; }
         }
 
-        public Population(double mutationRate, int popNumber, int planNum, int maxGeneration, double usageAverage, double[] usage )
+        public Tuple<long, double>[] UsageWithSim
         {
+            get { return _usage; }
+        }
+
+        private Random rand;
+
+        public Population(double mutationRate, int popNumber, int planNum, int maxGeneration, double usageAverage, Tuple<long, double>[] usage )
+        {
+            rand = new Random(DateTime.Now.Millisecond);
             _mutationRate = mutationRate;
             populationDNA = new DNA[popNumber];
             _usage = usage;
@@ -150,7 +158,7 @@ namespace VZWCostOptimizationGA
         public void GenerateBetter()
         {
 
-            var p = RandomGeneration.GetRandomNumber(populationDNA.Length - 1);
+            var p = rand.Next((populationDNA.Length - 1)/9);// RandomGeneration.GetRandomNumber(populationDNA.Length - 1);
             if (p%2 != 0) p++;
             var orderedPopulation = GetWorstToBestPopulation(populationDNA);
            
@@ -234,7 +242,7 @@ namespace VZWCostOptimizationGA
             }
 
             var index = 0;
-            var r = RandomGeneration.GetRandomDouble();
+            var r = rand.NextDouble();// RandomGeneration.GetRandomDouble();
 
             while (r > 0)
             {
@@ -248,7 +256,7 @@ namespace VZWCostOptimizationGA
         private DNA PickOne(DNA[] population)
         {
             var index = 0;
-            var r = RandomGeneration.GetRandomDouble();
+            var r = rand.NextDouble();// RandomGeneration.GetRandomDouble();
 
             while (r > 0)
             {

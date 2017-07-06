@@ -13,7 +13,7 @@ namespace VZWCostOptimizationGA
         private int[] planCount;
         private double[] usageCount;
         private readonly int _planNum;
-        private readonly double[] _usage;
+        private readonly Tuple<long, double>[] _usage;
         public double Fitness { get; set; }
         public double TotalCost { get; set; }
         private Plan[] _plansInfo;
@@ -21,15 +21,18 @@ namespace VZWCostOptimizationGA
         private double _usageAverage;
         public int Age { get; set; }
         private string id;
+
         public string Id
         {
             get { return id; }
             set { id = value; }
         }
 
+        private Random rand;
 
-        public DNA(int planNum, Plan[] plansInfo, double usageAverage, double[] usage)
+        public DNA(int planNum, Plan[] plansInfo, double usageAverage, Tuple<long, double>[] usage)
         {
+            rand = new Random(DateTime.Now.Millisecond);
             id = Guid.NewGuid().ToString();
             _planNum = planNum;
             Genes = new int[usage.Length];
@@ -51,7 +54,7 @@ namespace VZWCostOptimizationGA
                 }
                 else
                 {
-                    var r = RandomGeneration.GetRandomNumber(planNum);
+                    var r = rand.Next(planNum);// RandomGeneration.GetRandomNumber(planNum);
                     Genes[i] = r;
 
                 }
@@ -62,7 +65,7 @@ namespace VZWCostOptimizationGA
         private int PickOne(Plan[] plansInfo)
         {
             var index = 0;
-            var r = RandomGeneration.GetRandomDouble();
+            var r = rand.NextDouble();// RandomGeneration.GetRandomDouble();
 
             while (r > 0)
             {
@@ -78,7 +81,7 @@ namespace VZWCostOptimizationGA
             var result = items.ToArray();
             for (int i = items.Count(); i > 1; i--)
             {
-                int j = RandomGeneration.GetRandomNumber(i);
+                int j = rand.Next(i);// RandomGeneration.GetRandomNumber(i);
                 var t = result[j];
                 result[j] = result[i - 1];
                 result[i - 1] = t;
@@ -100,7 +103,7 @@ namespace VZWCostOptimizationGA
             for (int i = 0; i < Genes.Length; i++)
             {
                 planCount[Genes[i]]++;
-                usageCount[Genes[i]] += _usage[i];
+                usageCount[Genes[i]] += _usage[i].Item2;
             }
 
             TotalCost = 0;
@@ -117,7 +120,7 @@ namespace VZWCostOptimizationGA
             }
             
 
-            Fitness = Math.Pow(1 * (1/TotalCost) + 1/(totalPlancommitmentSum - _totalUsage) * 0, 3);
+            Fitness = 1 * Math.Pow((1/TotalCost), 2) + 1/(totalPlancommitmentSum - _totalUsage) * 0;
             //Fitness = Math.Pow((1 / TotalCost), 3);
         }
 
@@ -132,8 +135,8 @@ namespace VZWCostOptimizationGA
         {
             DNA child = new DNA(_planNum, _plansInfo, _usageAverage, _usage);
 
-            int midpoint1 = RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
-            int midpoint2 = RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
+            int midpoint1 = rand.Next(Genes.Length);// RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
+            int midpoint2 = rand.Next(Genes.Length); //RandomGeneration.GetRandomNumber(Genes.Length); // Pick a midpoint
 
             int start = Math.Min(midpoint1, midpoint2);
             int stop = Math.Max(midpoint1, midpoint2);
@@ -162,16 +165,17 @@ namespace VZWCostOptimizationGA
         {
             for (int i = 0; i < Genes.Length; i++)
             {
-                if (RandomGeneration.GetRandomDouble() < mutationRate)
+                if(rand.NextDouble() < mutationRate)
+                //if (RandomGeneration.GetRandomDouble() < mutationRate)
                 {
-                    var r1 = RandomGeneration.GetRandomNumber(Genes.Length);
-                    //var r2 = RandomGeneration.GetRandomNumber(Genes.Length);
-                    //var tmp = Genes[r2];
-                    //Genes[r2] = Genes[r1];
-                    //Genes[r1] = tmp;
+                    var r1 = rand.Next(Genes.Length);// RandomGeneration.GetRandomNumber(Genes.Length);
+                    var r2 = rand.Next(Genes.Length);//RandomGeneration.GetRandomNumber(Genes.Length);
+                    var tmp = Genes[r2];
+                    Genes[r2] = Genes[r1];
+                    Genes[r1] = tmp;
 
                     //Genes[r1] = RandomGeneration.GetRandomNumber(_planNum);
-                    Genes[r1] = PickOne(_plansInfo);
+                    //Genes[r1] = PickOne(_plansInfo);
 
                 }
             }
@@ -180,8 +184,8 @@ namespace VZWCostOptimizationGA
         public char GetRandomChar()
         {
             var chars = "abcdefghijklmnopqrstuvwxyz1234567890?,.ABCDEFGHIJKLMNOPQRSTUVWXYZ^& ".ToCharArray();
-            int rand = RandomGeneration.GetRandomNumber(chars.Length);
-            return chars[rand];
+            int r = rand.Next(chars.Length);// RandomGeneration.GetRandomNumber(chars.Length);
+            return chars[r];
         }
     }
 

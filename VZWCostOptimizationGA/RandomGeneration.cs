@@ -8,22 +8,22 @@ namespace VZWCostOptimizationGA
 {
     public static class RandomGeneration
     {
-        private static Random rand = new Random(DateTime.Now.Millisecond);
+        //private static Random rand = new Random(DateTime.Now.Millisecond);
 
-        public static int GetRandomNumber(int maxValue)
-        {
-            lock (rand)
-            {
-                return rand.Next(maxValue);
-            }
-        }
+        //public static int GetRandomNumber(int maxValue)
+        //{
+        //    //lock (rand)
+        //    {
+        //        return rand.Next(maxValue);
+        //    }
+        //}
 
-        public static double GetRandomDouble()
-        {
-            lock (rand)
-            {
-                return rand.NextDouble();
-            }
-        }
+        //public static double GetRandomDouble()
+        //{
+        //    //lock (rand)
+        //    {
+        //        return rand.NextDouble();
+        //    }
+        //}
     }
 }

@@ -31,7 +31,7 @@ namespace VZWCostOptimizationGA
                         }
                     case 3:
                         {
-                            return new Plan { Size = 1024, Cost = 20, OverageCost = 0.009 };
+                            return new Plan { Size = 1024, Cost = 15, OverageCost = 0.009 };
                         }
                     case 4:
                         {
