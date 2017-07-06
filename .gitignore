@@ -3,3 +3,5 @@ bin
 obj
 Data
 /result.txt
+/*.xlsm
+/VZWCostOptimizationGA/*.TMP
