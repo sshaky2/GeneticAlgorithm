@@ -13,7 +13,7 @@ namespace VZWCostOptimizationGA
         private int[] planCount;
         private double[] usageCount;
         private readonly int _planNum;
-        private readonly Tuple<long, double>[] _usage;
+        private readonly Data[] _usage;
         public double Fitness { get; set; }
         public double TotalCost { get; set; }
         private Plan[] _plansInfo;
@@ -30,7 +30,7 @@ namespace VZWCostOptimizationGA
 
         private Random rand;
 
-        public DNA(int planNum, Plan[] plansInfo, double usageAverage, Tuple<long, double>[] usage)
+        public DNA(int planNum, Plan[] plansInfo, double usageAverage, Data[] usage)
         {
             rand = new Random(DateTime.Now.Millisecond);
             id = Guid.NewGuid().ToString();
@@ -47,7 +47,17 @@ namespace VZWCostOptimizationGA
 
             for (int i = 0; i < Genes.Length; i++)
             {
-                if (i < Genes.Length/9)
+                //var r = rand.Next(100);
+                //if (r > 0)
+                //{
+                //    Genes[i] = PlanInformation.GetPlanId(usage[i].Plan);
+                //}
+                //else
+                //{
+                //    Genes[i] = rand.Next(planNum);
+                //}
+
+                if (i < Genes.Length / 9)
                 {
                     var r = PickOne(plansInfo);
                     Genes[i] = r;
@@ -58,7 +68,7 @@ namespace VZWCostOptimizationGA
                     Genes[i] = r;
 
                 }
-                
+
             }
         }
 
@@ -103,7 +113,7 @@ namespace VZWCostOptimizationGA
             for (int i = 0; i < Genes.Length; i++)
             {
                 planCount[Genes[i]]++;
-                usageCount[Genes[i]] += _usage[i].Item2;
+                usageCount[Genes[i]] += _usage[i].Usage;
             }
 
             TotalCost = 0;

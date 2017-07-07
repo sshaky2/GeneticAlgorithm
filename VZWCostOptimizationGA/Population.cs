@@ -19,7 +19,7 @@ namespace VZWCostOptimizationGA
         public DNA BestDNA { get; set; }
         public DNA WorstDNA { get; set; }
         private bool finished;
-        private Tuple<long, double>[] _usage;
+        private Data[] _usage;
         private double perfectScore;
         private int _maxGeneration;
         private double _usageAverag;
@@ -32,14 +32,14 @@ namespace VZWCostOptimizationGA
             set { populationDNA = value; }
         }
 
-        public Tuple<long, double>[] UsageWithSim
+        public Data[] UsageWithSim
         {
             get { return _usage; }
         }
 
         private Random rand;
 
-        public Population(double mutationRate, int popNumber, int planNum, int maxGeneration, double usageAverage, Tuple<long, double>[] usage )
+        public Population(double mutationRate, int popNumber, int planNum, int maxGeneration, double usageAverage, Data[] usage )
         {
             rand = new Random(DateTime.Now.Millisecond);
             _mutationRate = mutationRate;

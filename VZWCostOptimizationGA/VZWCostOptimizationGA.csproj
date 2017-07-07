@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data.cs" />
     <Compile Include="DNA.cs" />
     <Compile Include="GeneticAlgorithm.cs" />
     <Compile Include="Plan.cs" />

@@ -26,14 +26,14 @@ namespace VZWCostOptimizationGA
         public void Execute()
         {
             File.WriteAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt", string.Empty);
-            List<Tuple<long, double>> arr = new List<Tuple<long, double>> ();
-            string path = @"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\Data\data_with_sim.txt";
+            List<Data> arr = new List<Data> ();
+            string path = @"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\Data\data_latest_16370.txt";
             string[] lines = File.ReadAllLines(path);
             double total = 0;
             foreach (var val in lines)
             {
                 string[] line = val.Split(' ');
-                arr.Add(new Tuple<long, double>( Convert.ToInt64(line[0]), Convert.ToDouble(line[2])));
+                arr.Add(new Data {Sim = Convert.ToInt64(line[0]), Usage = Convert.ToDouble(line[1]), Plan = Convert.ToInt32(line[2])});
                 total += Convert.ToDouble(Convert.ToDouble(line[2]));
 
             }
@@ -41,10 +41,10 @@ namespace VZWCostOptimizationGA
             double average = total / lines.Length;
             var shuffledArray = Shuffle(arr);
 
-            List<Tuple<long, double>> pop1 = new List<Tuple<long, double>>();
-            List<Tuple<long, double>> pop2 = new List<Tuple<long, double>>();
-            List<Tuple<long, double>> pop3 = new List<Tuple<long, double>>();
-            List<Tuple<long, double>> pop4 = new List<Tuple<long, double>>();
+            List<Data> pop1 = new List<Data>();
+            List<Data> pop2 = new List<Data>();
+            List<Data> pop3 = new List<Data>();
+            List<Data> pop4 = new List<Data>();
 
             //List<double> pop5 = new List<double>();
             //List<double> pop6 = new List<double>();
@@ -92,8 +92,7 @@ namespace VZWCostOptimizationGA
             double total1 = 0;
             foreach (var val in pop1)
             {
-                double value = Convert.ToDouble(val.Item2);
-                total1 += Convert.ToDouble(val.Item2);
+                total1 += val.Usage;
 
             }
             double average1 = total1 / pop1.Count;
@@ -103,8 +102,7 @@ namespace VZWCostOptimizationGA
             double total2 = 0;
             foreach (var val in pop2)
             {
-                double value = Convert.ToDouble(val.Item2);
-                total2 += Convert.ToDouble(val.Item2);
+                total2 += val.Usage;
             }
             double average2 = total2 / pop2.Count;
             Population population2 = new Population(mutationRate, popMax, planNum, maxGeneration, average2, pop2.ToArray());
@@ -113,8 +111,7 @@ namespace VZWCostOptimizationGA
             double total3 = 0;
             foreach (var val in pop3)
             {
-                double value = Convert.ToDouble(val.Item2);
-                total3 += Convert.ToDouble(val.Item2);
+                total3 += val.Usage;
             }
             double average3 = total3 / pop3.Count;
             Population population3 = new Population(mutationRate, popMax, planNum, maxGeneration, average3, pop3.ToArray());
@@ -123,8 +120,7 @@ namespace VZWCostOptimizationGA
             double total4 = 0;
             foreach (var val in pop4)
             {
-                double value = Convert.ToDouble(val.Item2);
-                total4 += Convert.ToDouble(val.Item2);
+                total4 += val.Usage;
             }
             double average4 = total4 / pop4.Count;
             Population population4 = new Population(mutationRate, popMax, planNum, maxGeneration, average4, pop4.ToArray());
@@ -192,7 +188,7 @@ namespace VZWCostOptimizationGA
                         for (int i = 0; i < population.UsageWithSim.Length; i++)
                         {
                             File.AppendAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt",
-                                $"{population.UsageWithSim[i].Item1} , {population.UsageWithSim[i].Item2} , {bestDna.Genes[i]} {Environment.NewLine}");
+                                $"{population.UsageWithSim[i].Sim} , {population.UsageWithSim[i].Usage} , {bestDna.Genes[i]} {Environment.NewLine}");
                         }
                         break;
                     }
