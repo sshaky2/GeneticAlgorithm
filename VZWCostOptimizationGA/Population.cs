@@ -21,6 +21,14 @@ namespace VZWCostOptimizationGA
         private int _maxGeneration;
         private double _usageAverag;
 
+        public double TargetAverage
+        {
+            get
+            {
+                return _targetAverage;
+            }
+        }
+
         public Plan[] PlansInfo { get; set; }
 
         public DNA[] DNAPopulation
@@ -45,6 +53,7 @@ namespace VZWCostOptimizationGA
             populationDNA = new DNA[popNumber];
             _usage = usage;
             _targetAverage = targetAverage;
+            
             
             TotalFitness = 0;
             for (int i = 0; i < populationDNA.Length; i++)

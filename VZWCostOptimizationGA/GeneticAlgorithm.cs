@@ -9,13 +9,13 @@ namespace VZWCostOptimizationGA
 {
     public class GeneticAlgorithm
     {
-        const int popMax = 2000;
+        const int popMax = 1000;
         const double mutationRate = 0.01;
         const int planNum = 8;
         const int maxGeneration = 100000;
         int[] planMembersCount = new int[planNum];
         double[] planMemberUsageSum = new double[planNum];
-        List<int> _targetAverages = new List<int> {3, 25, 250, 1024, 5120, 10240, 20480};
+        List<int> _targetAverages = new List<int> {10240, 5120, 1024,250, 25, 3 };
 
         private Random rand;
 
@@ -40,43 +40,61 @@ namespace VZWCostOptimizationGA
             }
 
             double average = total / lines.Length;
-            var shuffledArray = Shuffle(arr);
+            
 
             Permutation perm = new Permutation();
             var permutedPlans = perm.prnPermut(_targetAverages.ToArray(), 0, _targetAverages.Count - 1);
 
             int setCount = 0;
-            foreach (var item in permutedPlans)
+            //foreach (var item in permutedPlans)
             {
+                var shuffledArray = Shuffle(arr);
+                var item = new List<int> {10240,5120,1024,3,250,25};
                 double cost = 0;
                 for (int i = 0; i < item.Count; i++)
                 {
-                    Population population = new Population(mutationRate, popMax, item[i],
+                    int lastArraySize = -1;
+                    File.AppendAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt", $"Target average {item[i]} {Environment.NewLine}");
+                    do
+                    {
+                        Population population = new Population(mutationRate, popMax, item[i],
                         shuffledArray.ToArray());
-                    var selectedMembers = ExecuteGA(population);
-                    List<int> removeIndex = new List<int>();
-                    int count = 0;
-                    double usageSum = 0;
-                    for (int j = 0; j < selectedMembers.Length; j++)
-                    {
-                        if (selectedMembers[j] == 1)
+                        lastArraySize = shuffledArray.Length;
+                        var selectedMembers = ExecuteGA(population);
+                        List<int> removeIndex = new List<int>();
+                        int count = 0;
+                        double usageSum = 0;
+                        for (int j = 0; j < selectedMembers.Length; j++)
                         {
-                            removeIndex.Add(j);
-                            count++;
-                            usageSum += shuffledArray[i].Item2;
-                        }
+                            if (selectedMembers[j] == 1)
+                            {
+                                removeIndex.Add(j);
+                                count++;
+                                usageSum += shuffledArray[i].Item2;
+                            }
 
-                    }
-                    var planInformation = PlanInformation.GetInfo(item[i]);
-                    cost += count * planInformation.Cost;
-                    if (usageSum > count * planInformation.Size)
-                    {
-                        cost += (usageSum - (count*planInformation.Size))*planInformation.OverageCost;
-                    }
-                    shuffledArray.ToList().RemoveAll(x => removeIndex.Contains(shuffledArray.ToList().IndexOf(x)));
-                    File.AppendAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt", $"Set {setCount}:  Total Cost: {cost} {Environment.NewLine}");
+                        }
+                        var planInformation = PlanInformation.GetInfo(item[i]);
+                        cost += count * planInformation.Cost;
+                        if (usageSum > count * planInformation.Size)
+                        {
+                            cost += (usageSum - (count * planInformation.Size)) * planInformation.OverageCost;
+                        }
+                        var abc = shuffledArray.ToList();
+                        abc.RemoveAll(x => removeIndex.Contains(abc.IndexOf(x)));
+                        shuffledArray = abc.ToArray();
+                        
+                        
+                    } while (shuffledArray.Length != lastArraySize);
                     setCount++;
                 }
+                File.AppendAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt", $"Set {setCount}:  Total Cost: {cost} {Environment.NewLine} Remaining items: {Environment.NewLine}");
+                foreach (var x in shuffledArray)
+                {
+                    File.AppendAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt", $"{x} {Environment.NewLine}");
+                    Console.WriteLine($"Remaining: {x}");
+                }
+                File.AppendAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt", $"{Environment.NewLine}");
             }
 
 
@@ -94,13 +112,20 @@ namespace VZWCostOptimizationGA
             {
                 bestAverage = population.BestDNA.GeneAverage;
 
-                if(counter >= 500)
+                if(counter >= 100)
                 {
-                    File.AppendAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt", $"Best Average: {bestAverage} {Environment.NewLine}");
-                    var bestDna = population.BestDNA;
-                    string lockingVar = string.Empty;
-                    break;
-                    
+                    if((population.TargetAverage - bestAverage) > 0 && (population.TargetAverage - bestAverage) < 5)
+                    {
+                        File.AppendAllText(@"C:\Users\sshakya\Documents\GitHub\VZWCostOptimizationGA\result.txt",
+                            $"Best Average: {bestAverage} {Environment.NewLine}");
+                        var bestDna = population.BestDNA;
+                        break;
+                    }
+                    else
+                    {
+                        return new int[population.BestDNA.Genes.Length];
+                    }
+
                 }
                 population.GenerateBetter();
                 Console.WriteLine($"Generation: {population.Generations}, Best Average: {bestAverage}");

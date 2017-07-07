@@ -17,35 +17,35 @@ namespace VZWCostOptimizationGA
             {
                 switch (planId)
                 {
-                    case 0:
+                    case 3:
                         {
                             return new Plan { Size = 3, Cost = 1, OverageCost = 0.7 };
                         }
-                    case 1:
+                    case 25:
                         {
                             return new Plan { Size = 25, Cost = 7, OverageCost = 0.009 };
                         }
-                    case 2:
+                    case 250:
                         {
                             return new Plan { Size = 250, Cost = 8, OverageCost = 0.009 };
                         }
-                    case 3:
+                    case 1024:
                         {
                             return new Plan { Size = 1024, Cost = 15, OverageCost = 0.009 };
                         }
-                    case 4:
+                    case 5120:
                         {
                             return new Plan { Size = 5120, Cost = 35, OverageCost = 0.009 };
                         }
-                    case 5:
+                    case 10240:
                         {
                             return new Plan { Size = 10240, Cost = 60, OverageCost = 0.009 };
                         }
-                    case 6:
+                    case 20480:
                         {
                             return new Plan { Size = 20480, Cost = 125, OverageCost = 0.009 };
                         }
-                    case 7:
+                    case 30720:
                         {
                             return new Plan { Size = 30720, Cost = 235, OverageCost = 0.009 };
                         }
